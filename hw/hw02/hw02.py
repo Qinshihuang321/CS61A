@@ -23,6 +23,13 @@ def num_eights(x):
     True
     """
     "*** YOUR CODE HERE ***"
+    if(x % 10 == 8):
+        return 1 + num_eights(x // 10)
+    if(x == 0):
+        return 0
+    return num_eights(x // 10)
+
+
 
 
 def pingpong(n):
@@ -58,6 +65,26 @@ def pingpong(n):
     True
     """
     "*** YOUR CODE HERE ***"
+    
+    def pingpong1(n):
+        if(n == 0):
+            return 0       
+        if(n % 8 == 0 or num_eights(n) != 0): 
+            return pingpong2(n - 1) + 1
+        else:
+            return pingpong1(n - 1) - 1
+    
+    def pingpong2(n):
+        if(n == 0):
+            return 0   
+        if(n % 8 == 0 or num_eights(n) != 0): 
+            return pingpong1(n - 1) - 1  
+        else:
+            return pingpong2(n - 1) + 1
+        
+    return pingpong1(n)
+
+
 
 
 def missing_digits(n):
@@ -88,6 +115,15 @@ def missing_digits(n):
     True
     """
     "*** YOUR CODE HERE ***"
+    if(n < 10):
+        return 0
+    def find_digits(first , second):
+        if(first == second):
+            return 0
+        return find_digits(first - 1 , second) + 1
+    if(n % 10 - 1 > (n // 10) % 10):
+        return find_digits(n % 10 - 1, (n // 10) % 10) + missing_digits(n // 10)
+    return  missing_digits(n // 10)
 
 
 def next_largest_coin(coin):
@@ -124,6 +160,24 @@ def count_coins(total):
     True
     """
     "*** YOUR CODE HERE ***"
+    def next_smallest_coin(coin):
+        if coin == 5:
+            return 1
+        elif coin == 10:
+            return 5
+        elif coin == 25:
+            return 10        
+    
+    def function(total , current_coins):
+        if(total == 0):
+            return 1
+        elif(total < 0):
+            return 0
+        if(current_coins == 1):
+            return 1
+        return function(total - current_coins , current_coins) + function(total , next_smallest_coin(current_coins))
+    return function(total , 25)
+
 
 
 from operator import sub, mul
