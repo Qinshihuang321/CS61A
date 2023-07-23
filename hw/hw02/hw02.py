@@ -65,25 +65,28 @@ def pingpong(n):
     True
     """
     "*** YOUR CODE HERE ***"
-    
-    def pingpong1(n):
-        if(n == 0):
-            return 0       
-        if(n % 8 == 0 or num_eights(n) != 0): 
-            return pingpong2(n - 1) + 1
+    """
+    def helper(index, value, direction):
+        if index == 1:
+            return value
+        elif (index - 1) % 8 == 0 or num_eights(index - 1) > 0:
+            return helper(index - 1, value - direction, -direction)
         else:
-            return pingpong1(n - 1) - 1
-    
-    def pingpong2(n):
-        if(n == 0):
-            return 0   
-        if(n % 8 == 0 or num_eights(n) != 0): 
-            return pingpong1(n - 1) - 1  
-        else:
-            return pingpong2(n - 1) + 1
-        
-    return pingpong1(n)
+            return helper(index - 1, value + direction, direction)
 
+    return helper(n, 1, 1)
+    """
+    def helper(num , state , pp_val):
+        if num == 1:
+            return pp_val
+        if num % 8 == 0 or num_eights(num) != 0:
+            state *= -1
+        if state == 1:
+            return helper(num - 1 , state , pp_val - 1)
+        else:
+            return helper(num - 1 , state , pp_val + 1)
+    return helper(n , 1 , 1)
+    
 
 
 
@@ -143,41 +146,43 @@ def next_largest_coin(coin):
     elif coin == 10:
         return 25
 
+def count_change(total):
+    """Return the number of ways to make change for total.
 
-def count_coins(total):
-    """Return the number of ways to make change for total using coins of value of 1, 5, 10, 25.
-    >>> count_coins(15)
+    >>> count_change(7)
     6
-    >>> count_coins(10)
-    4
-    >>> count_coins(20)
-    9
-    >>> count_coins(100) # How many ways to make change for a dollar?
-    242
+    >>> count_change(10)
+    14
+    >>> count_change(20)
+    60
+    >>> count_change(100)
+    9828
     >>> from construct_check import check
     >>> # ban iteration
-    >>> check(HW_SOURCE_FILE, 'count_coins', ['While', 'For'])                                          
+    >>> check(HW_SOURCE_FILE, 'count_change', ['While', 'For'])
     True
     """
     "*** YOUR CODE HERE ***"
-    def next_smallest_coin(coin):
-        if coin == 5:
+    '''
+    def helper(n, m):
+        if m == 0:
             return 1
-        elif coin == 10:
-            return 5
-        elif coin == 25:
-            return 10        
-    
-    def function(total , current_coins):
-        if(total == 0):
+        elif n == 0:
             return 1
-        elif(total < 0):
+        elif n < (1 << m):
+            return helper(n, m - 1)
+        else:
+            return helper(n, m - 1) + helper(n - (1 << m), m)
+    return helper(total, 4)
+    '''
+    def helper(n, m):
+        if n == 0:
+            return 1
+        elif n < (1 << m):
             return 0
-        if(current_coins == 1):
-            return 1
-        return function(total - current_coins , current_coins) + function(total , next_smallest_coin(current_coins))
-    return function(total , 25)
-
+        else:
+            return helper(n, m + 1) + helper(n - (1 << m), m)
+    return helper(total, 0)
 
 
 from operator import sub, mul
