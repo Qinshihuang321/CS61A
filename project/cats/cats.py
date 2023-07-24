@@ -18,10 +18,10 @@ def choose(paragraphs, select, k):
     # BEGIN PROBLEM 1
     "*** YOUR CODE HERE ***"
     count = 0
-    for paragraphs in paragraphs:
-        if select(paragraphs):
+    for paragraph in paragraphs:
+        if select(paragraph):
             if count == k:
-                return paragraphs
+                return paragraph
             count += 1
     return ''
     # END PROBLEM 1
@@ -40,6 +40,14 @@ def about(topic):
     assert all([lower(x) == x for x in topic]), 'topics should be lowercase.'
     # BEGIN PROBLEM 2
     "*** YOUR CODE HERE ***"
+    def select(paragraphy):
+        no_punctuation_lower_paragraphy = remove_punctuation(lower(paragraphy))
+        for i in topic:
+            for j in split(no_punctuation_lower_paragraphy):
+                if(i == j):
+                    return True
+        return False
+    return select
     # END PROBLEM 2
 
 
@@ -64,6 +72,18 @@ def accuracy(typed, reference):
     reference_words = split(reference)
     # BEGIN PROBLEM 3
     "*** YOUR CODE HERE ***"
+    error = 0
+    words = len(reference_words)
+    if len(typed_words) == 0:
+        return 0.0
+
+    for i in range(len(typed_words)):
+        if i >= words:
+            error += 1            
+        elif typed_words[i] != reference_words[i]:
+            error += 1
+    return (1 - error / len(typed_words)) * 100
+            
     # END PROBLEM 3
 
 
@@ -72,6 +92,7 @@ def wpm(typed, elapsed):
     assert elapsed > 0, 'Elapsed time must be positive'
     # BEGIN PROBLEM 4
     "*** YOUR CODE HERE ***"
+    return len(typed) / 5 * 60 / elapsed 
     # END PROBLEM 4
 
 
