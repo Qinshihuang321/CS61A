@@ -103,8 +103,33 @@ def autocorrect(user_word, valid_words, diff_function, limit):
     """
     # BEGIN PROBLEM 5
     "*** YOUR CODE HERE ***"
+    
+    # native version
+    if user_word in valid_words:
+        return user_word                    
+    current_error = limit + 1
+    min_error = limit + 1
+    error_word = ''
+    for i in valid_words:
+        current_error = diff_function(user_word, i, limit)
+        if(min_error > current_error):
+            min_error = current_error
+            error_word = i
+    if(min_error <= limit):
+        return error_word
+    else:
+        return user_word
+    """
+    # improved version
+    if user_word in valid_words:
+        return user_word
+    best_match = min(valid_words , key = lambda word : diff_function(word , user_word , limit))
+    if diff_function(best_match , user_word , limit) <= limit:
+        return best_match
+    else:
+        return user_word
     # END PROBLEM 5
-
+    """
 
 def shifty_shifts(start, goal, limit):
     """A diff function for autocorrect that determines how many letters
@@ -112,30 +137,49 @@ def shifty_shifts(start, goal, limit):
     their lengths.
     """
     # BEGIN PROBLEM 6
-    assert False, 'Remove this line'
+    if(start == goal):
+        return 0
+    if abs(len(start) - len(goal)) > limit:
+        return limit + 1
+    if(len(goal) == 0 or len(start) == 0):
+        return max(len(goal) , len(start))
+    elif(goal[0] == start[0]):
+        return shifty_shifts(start[1:] , goal[1:] , limit)
+    else:
+        error = shifty_shifts(start[1:] , goal[1:] , limit - 1) + 1
+    return error if error <= limit else limit + 1
+
     # END PROBLEM 6
 
 
 def pawssible_patches(start, goal, limit):
     """A diff function that computes the edit distance from START to GOAL."""
-    assert False, 'Remove this line'
 
-    if ______________: # Fill in the condition
+    if start == goal: # Fill in the condition
         # BEGIN
         "*** YOUR CODE HERE ***"
+        return 0
         # END
 
-    elif ___________: # Feel free to remove or add additional cases
+    elif abs(len(start) - len(goal)) > limit: # Feel free to remove or add additional cases
         # BEGIN
         "*** YOUR CODE HERE ***"
+        return limit + 1
         # END
 
+    if len(goal) == 0 or len(start) == 0:
+        return max(len(goal) , len(start))
+    
+    if(start[0] == goal[0]):
+        return  pawssible_patches(start[1:], goal[1:], limit)
     else:
-        add_diff = ... # Fill in these lines
-        remove_diff = ...
-        substitute_diff = ...
+        add_diff = 1 + pawssible_patches(start, goal[1:], limit - 1) # Fill in these lines
+        remove_diff = 1 + pawssible_patches(start[1:], goal, limit - 1) 
+        substitute_diff = 1 + pawssible_patches(start[1:], goal[1:], limit - 1)
         # BEGIN
         "*** YOUR CODE HERE ***"
+        step = min(add_diff , remove_diff , substitute_diff)
+    return step if step <= limit else limit + 1
         # END
 
 
