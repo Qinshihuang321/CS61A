@@ -1,5 +1,5 @@
 def couple(s, t):
-    """Return a list of two-element lists in which the i-th element is [s[i], t[i]].
+    """Return a list of two-element lists in which the i-th element is [s[i], t[i]]. 
 
     >>> a = [1, 2, 3]
     >>> b = [4, 5, 6]
