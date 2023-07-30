@@ -272,8 +272,12 @@ def riffle(deck):
     [0, 10, 1, 11, 2, 12, 3, 13, 4, 14, 5, 15, 6, 16, 7, 17, 8, 18, 9, 19]
     """
     "*** YOUR CODE HERE ***"
-    return _______
-
+    """
+    #first version
+    return [do_riffle for index in range(len(deck) // 2 ) for do_riffle in (deck[index] ,deck[index + len(deck) // 2])]
+    """
+    #another version
+    return [deck[i // 2 if i % 2 == 0 else len(deck) // 2 + (i - 1) // 2] for i in range(len(deck))]
 
 def add_trees(t1, t2):
     """
@@ -311,7 +315,24 @@ def add_trees(t1, t2):
       5
     """
     "*** YOUR CODE HERE ***"
-
+    if is_leaf(t1) and is_leaf(t2):
+        return tree(label(t1) + label(t2))
+    elif is_leaf(t1):
+        return tree(label(t1) + label(t2), branches(t2))
+    elif is_leaf(t2):
+        return tree(label(t1) + label(t2), branches(t1))
+    else:
+        len_t1 , len_t2 = len(branches(t1)) ,len(branches(t2))
+        new_branches = []
+        if len_t1 == len_t2:
+            new_branches += [add_trees(branches(t1)[i], branches(t2)[i]) for i in range(len_t1)]
+        else:
+            new_branches += [add_trees(branches(t1)[i], branches(t2)[i]) for i in range(min(len_t1, len_t2))]
+            if len_t1 > len_t2:
+                new_branches += branches(t1)[len_t2 : ]
+            else:
+                new_branches += branches(t2)[len_t1 : ]
+        return tree(label(t1) + label(t2) , new_branches)
 
 def build_successors_table(tokens):
     """Return a dictionary: keys are words; values are lists of successors.
