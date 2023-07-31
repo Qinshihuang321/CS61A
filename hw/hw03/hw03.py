@@ -107,9 +107,11 @@ def balanced(m):
     True
     """
     "*** YOUR CODE HERE ***"
+    if is_planet(m):
+        return True
+    else:
+        return True if length(left(m)) * total_weight(end(left(m))) == length(right(m)) * total_weight(end(right(m))) and balanced(end(left(m))) and balanced(end(right(m))) else False
     
-    
-    return True if length(m[1]) * total_weight(end(m[1])) == length(m[2]) * total_weight(end(m[1])) else False
 
 def totals_tree(m):
     """Return a tree representing the mobile with its total weight at the root.
@@ -141,7 +143,13 @@ def totals_tree(m):
     True
     """
     "*** YOUR CODE HERE ***"
-
+    if is_planet(m):
+        return tree(size(m))
+    else:
+        new_branches = []
+        left_end , right_end = end(left(m)), end(right(m))
+        new_branches = [totals_tree(left_end), totals_tree(right_end)]
+    return tree(total_weight(m), new_branches)
 
 def replace_leaf(t, find_value, replace_value):
     """Returns a new tree where every leaf value equal to find_value has
@@ -173,7 +181,15 @@ def replace_leaf(t, find_value, replace_value):
     True
     """
     "*** YOUR CODE HERE ***"
-
+    if is_leaf(t):
+            return tree(replace_value) if label(t) == find_value else t
+    new_branches = []
+    """
+    for branch in branches(t):
+        new_branches.append(replace_leaf(branch, find_value, replace_value)) 
+    """
+    new_branches = [replace_leaf(branch, find_value, replace_value) for branch in branches(t)]
+    return tree(label(t), new_branches)
 
 def preorder(t):
     """Return a list of the entries in this tree in the order that they
@@ -186,7 +202,16 @@ def preorder(t):
     [2, 4, 6]
     """
     "*** YOUR CODE HERE ***"
-
+    """
+    def find_entries(t, list):
+        if is_leaf(t):
+            return [label(t)]
+        list.append(label(t))
+        list.extend(element for branch in branches(t) for element in preorder(branch))
+        return list
+    return find_entries(t,[])
+    """
+    return [label(t)] + sum([preorder(branch) for branch in branches(t)], [])
 
 def has_path(t, word):
     """Return whether there is a path in a tree where the entries along the path
@@ -218,7 +243,14 @@ def has_path(t, word):
     """
     assert len(word) > 0, 'no path for empty word.'
     "*** YOUR CODE HERE ***"
-
+    if word[0] != label(t):
+        return False
+    elif len(word) == 1:
+        return True
+    for branch in branches(t):
+        if has_path(branch ,word[1:]):
+            return True
+    return False
 
 def interval(a, b):
     """Construct an interval from a to b."""
@@ -227,10 +259,13 @@ def interval(a, b):
 def lower_bound(x):
     """Return the lower bound of interval x."""
     "*** YOUR CODE HERE ***"
+    return x[0]
 
 def upper_bound(x):
     """Return the upper bound of interval x."""
     "*** YOUR CODE HERE ***"
+    return x[1]
+
 def str_interval(x):
     """Return a string representation of interval x.
     """
@@ -242,31 +277,37 @@ def add_interval(x, y):
     lower = lower_bound(x) + lower_bound(y)
     upper = upper_bound(x) + upper_bound(y)
     return interval(lower, upper)
+
 def mul_interval(x, y):
     """Return the interval that contains the product of any value in x and any
     value in y."""
-    p1 = x[0] * y[0]
-    p2 = x[0] * y[1]
-    p3 = x[1] * y[0]
-    p4 = x[1] * y[1]
-    return [min(p1, p2, p3, p4), max(p1, p2, p3, p4)]
+    p1 = lower_bound(x) * lower_bound(y)
+    p2 = lower_bound(x) * upper_bound(y)
+    p3 = upper_bound(x) * lower_bound(y)
+    p4 = upper_bound(x) * upper_bound(y)
+    return interval(min(p1, p2, p3, p4), max(p1, p2, p3, p4))
 
 
 def sub_interval(x, y):
     """Return the interval that contains the difference between any value in x
     and any value in y."""
     "*** YOUR CODE HERE ***"
-
+    lower = lower_bound(x) - upper_bound(y)
+    upper = upper_bound(x) - lower_bound(y)
+    return interval(lower, upper)
 
 def div_interval(x, y):
     """Return the interval that contains the quotient of any value in x divided by
     any value in y. Division is implemented as the multiplication of x by the
     reciprocal of y."""
     "*** YOUR CODE HERE ***"
+    assert not (lower_bound(y) <= 0 and upper_bound(y) >= 0)
     reciprocal_y = interval(1/upper_bound(y), 1/lower_bound(y))
     return mul_interval(x, reciprocal_y)
 
-
+#Louis Reasoner     loose reasoner
+#Alyssa P. Hacker       A Lisp Hacker
+#Lem E. Tweakit     Let me tweak it
 def par1(r1, r2):
     return div_interval(mul_interval(r1, r2), add_interval(r1, r2))
 
@@ -275,6 +316,8 @@ def par2(r1, r2):
     rep_r1 = div_interval(one, r1)
     rep_r2 = div_interval(one, r2)
     return div_interval(one, add_interval(rep_r1, rep_r2))
+ 
+
 def check_par():
     """Return two intervals that give different results for parallel resistors.
 
@@ -284,8 +327,8 @@ def check_par():
     >>> lower_bound(x) != lower_bound(y) or upper_bound(x) != upper_bound(y)
     True
     """
-    r1 = interval(1, 1) # Replace this line!
-    r2 = interval(1, 1) # Replace this line!
+    r1 = interval(1, 2) # Replace this line!
+    r2 = interval(1, 2) # Replace this line!
     return r1, r2
 
 
