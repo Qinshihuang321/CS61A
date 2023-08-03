@@ -139,23 +139,12 @@ def permutations(seq):
     [['a', 'b'], ['b', 'a']]
     """
     "*** YOUR CODE HERE ***"
-    l = len(seq)
-    is_used = {i: False for i in range(len(seq))}
-    def dfs(pos, is_used, list):
-        nonlocal seq
-        if l == pos:
-            return list
-        for i in range(l):
-            if not is_used[i]:
-                list.append(seq[i])
-                is_used[i] = True
-                pos += 1
-                dfs(pos, is_used, list)
-                pos -= 1
-                is_used[i] = False
-                list.pop()
-        return list
-    return dfs(1, is_used, [])
+    if len(seq) == 0:
+        yield []
+    else:
+        for perm in permutations(seq[1:]):
+            for i in range(len(perm) + 1):
+                yield perm[:i] + [seq[0]] + perm[i:]
 
 
 def make_joint(withdraw, old_pass, new_pass):
@@ -197,7 +186,16 @@ def make_joint(withdraw, old_pass, new_pass):
     "Frozen account. Attempts: ['my', 'secret', 'password']"
     """
     "*** YOUR CODE HERE ***"
-    
+    check = withdraw(0, old_pass)
+    if type(check) == str:
+        return check
+    def make_joint(amount, password):
+        if password == new_pass:
+            return withdraw(amount, old_pass)
+        else:
+            return withdraw(amount, password)
+    return make_joint
+
 
 def remainders_generator(m):
     """
@@ -231,6 +229,13 @@ def remainders_generator(m):
     11
     """
     "*** YOUR CODE HERE ***"
+    def reminder(n, natural):
+        while True:
+            x = next(natural)
+            if x % m == n:
+                yield x
+    for i in range(m):
+        yield reminder(i, natural = naturals())
 
 
 def naturals():
