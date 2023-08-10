@@ -106,9 +106,11 @@ class Mint:
 
     def create(self, kind):
         "*** YOUR CODE HERE ***"
-
+        inst = kind(self.year)
+        return inst
     def update(self):
         "*** YOUR CODE HERE ***"
+        self.year = self.current_year
 
 class Coin:
     def __init__(self, year):
@@ -116,6 +118,11 @@ class Coin:
 
     def worth(self):
         "*** YOUR CODE HERE ***"
+        change = Mint.current_year - self.year
+        if change <= 50:
+            return self.cents
+        else:
+            return change - 50 + self.cents
 
 class Nickel(Coin):
     cents = 5
@@ -170,6 +177,7 @@ def is_bst(t):
     "*** YOUR CODE HERE ***"
 
 
+
 def preorder(t):
     """Return a list of the entries in this tree in the order that they
     would be visited by a preorder traversal (see problem description).
@@ -219,11 +227,6 @@ def path_yielder(t, value):
     """
 
     "*** YOUR CODE HERE ***"
-
-    for _______________ in _________________:
-        for _______________ in _________________:
-
-            "*** YOUR CODE HERE ***"
 
 
 class Link:
