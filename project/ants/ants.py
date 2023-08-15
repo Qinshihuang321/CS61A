@@ -54,6 +54,7 @@ class Insect:
 
     damage = 0
     # ADD CLASS ATTRIBUTES HERE
+    is_watersafe = False
 
     def __init__(self, armor, place=None):
         """Create an Insect with an ARMOR amount and a starting PLACE."""
@@ -93,7 +94,10 @@ class Insect:
         self.place = place
 
     def remove_from(self, place):
-        self.place = None
+        if self.name == 'Queen' and self.is_first:
+            pass
+        else:
+            self.place = None
 
 
     def __repr__(self):
@@ -107,6 +111,7 @@ class Ant(Insect):
     implemented = False  # Only implemented Ant classes should be instantiated
     food_cost = 0
     # ADD CLASS ATTRIBUTES HERE
+    is_double = False
 
     def __init__(self, armor=1):
         """Create an Ant with an ARMOR quantity."""
@@ -132,9 +137,13 @@ class Ant(Insect):
 
     def remove_from(self, place):
         if place.ant is self:
-            place.ant = None
+            if self.name == 'Queen' and self.is_first:
+                pass
+            else:
+                place.ant = None
         elif place.ant is None:
             assert False, '{0} is not in {1}'.format(self, place)
+
         else:
             # queen or container (optional) or other situation
             place.ant.remove_ant(self)
@@ -326,27 +335,41 @@ class Water(Place):
         its armor to 0."""
         # BEGIN Problem 8
         "*** YOUR CODE HERE ***"
+        Place.add_insect(self, insect)
+        if not insect.is_watersafe:
+            Insect.reduce_armor(insect, insect.armor)
         # END Problem 8
 
 # BEGIN Problem 9
 # The ScubaThrower class
+class ScubaThrower(ThrowerAnt):
+    name = 'Scuba'
+    is_watersafe = True
+    food_cost = 6
+    implenment = True
 # END Problem 9
 
 # BEGIN Problem EC
-class QueenAnt(Ant):  # You should change this line
+class QueenAnt(ScubaThrower):  # You should change this line
 # END Problem EC
     """The Queen of the colony. The game is over if a bee enters her place."""
-
     name = 'Queen'
     food_cost = 7
     # OVERRIDE CLASS ATTRIBUTES HERE
     # BEGIN Problem EC
-    implemented = False   # Change to True to view in the GUI
+    implemented = True   # Change to True to view in the GUI
+    is_first = True
+    counter = 0
     # END Problem EC
 
     def __init__(self, armor=1):
         # BEGIN Problem EC
         "*** YOUR CODE HERE ***"
+
+        ScubaThrower.__init__(self, armor)
+        if self.is_first:
+            QueenAnt.is_first = False
+            self.is_first = True
         # END Problem EC
 
     def action(self, gamestate):
@@ -357,6 +380,17 @@ class QueenAnt(Ant):  # You should change this line
         """
         # BEGIN Problem EC
         "*** YOUR CODE HERE ***"
+        if self.is_first:
+            ScubaThrower.action(self, gamestate)
+            if self.is_first:
+                place = self.place.exit
+                while place is not None:
+                    if place.ant and not place.ant.is_double:
+                        place.ant.is_double = True
+                        place.ant.damage *= 2
+                    place = place.exit
+        else:
+            self.reduce_armor(self.armor)
         # END Problem EC
 
     def reduce_armor(self, amount):
@@ -365,8 +399,12 @@ class QueenAnt(Ant):  # You should change this line
         """
         # BEGIN Problem EC
         "*** YOUR CODE HERE ***"
-        # END Problem EC
+        is_first = self.is_first
+        ScubaThrower.reduce_armor(self, amount)
+        if is_first and self.armor <= 0:
+            bees_win()      
 
+        # END Problem EC
 
 
 class AntRemover(Ant):
@@ -384,7 +422,7 @@ class Bee(Insect):
     name = 'Bee'
     damage = 1
     # OVERRIDE CLASS ATTRIBUTES HERE
-
+    is_watersafe = True
 
     def sting(self, ant):
         """Attack an ANT, reducing its armor by 1."""
