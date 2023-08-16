@@ -147,7 +147,19 @@ def store_digits(n):
     >>> print("Do not use str or reversed!") if any([r in cleaned for r in ["str", "reversed"]]) else None
     """
     "*** YOUR CODE HERE ***"
-
+    """
+    #sequential_version
+    if n == 0:
+        return ()
+    else:
+        return Link(n % 10, store_digits(n // 10))
+    """
+    #reversed_version
+    def helper(n , rest = ()):
+        if n:
+            return
+        else:
+            helper(n // 10, Link(n % 10, rest))
 
 def is_bst(t):
     """Returns True if the Tree t has the structure of a valid BST.
@@ -175,8 +187,31 @@ def is_bst(t):
     False
     """
     "*** YOUR CODE HERE ***"
+    
+    l = len(t.branches) 
+    if t.is_leaf():
+        return True
+    if l > 2:
+        return False
+    elif l == 1:
+        return is_bst(t.branches[0])
+    else:
+        left = t.branches[0]
+        right = t.branches[1]
+        if t.label < bst_min(left) or t.label >= bst_max(right):
+            return False
+        else:
+            return is_bst(left) and is_bst(right)
+        
+def bst_min(t):
+    if t.is_leaf():
+        return t.label
+    return bst_min(t.branches[0])
 
-
+def bst_max(t):
+    if t.is_leaf():
+        return t.label
+    return bst_max(t.branches[1])
 
 def preorder(t):
     """Return a list of the entries in this tree in the order that they
@@ -189,7 +224,23 @@ def preorder(t):
     [2, 4, 6]
     """
     "*** YOUR CODE HERE ***"
-
+    """
+    #method_1
+    lst = []
+    def helper(t, lst):
+        if t.is_leaf():
+            lst.append(t.label)
+        else:
+            lst.append(t.label)
+            for branch in t.branches:
+                helper(branch, lst)
+    helper(t, lst)
+    return lst
+    """
+    #method_2
+    #method_3
+    [branch.label for branch in t.branches]
+        
 
 def path_yielder(t, value):
     """Yields all possible paths from the root of t to a node with the label value
@@ -227,6 +278,11 @@ def path_yielder(t, value):
     """
 
     "*** YOUR CODE HERE ***"
+
+    for _______________ in _________________:
+        for _______________ in _________________:
+
+            "*** YOUR CODE HERE ***"
 
 
 class Link:
