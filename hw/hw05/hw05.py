@@ -278,11 +278,13 @@ def path_yielder(t, value):
     """
 
     "*** YOUR CODE HERE ***"
-
-    for _______________ in _________________:
-        for _______________ in _________________:
-
-            "*** YOUR CODE HERE ***"
+    if t.label == value:
+        yield [value]
+    for branch in t.branches:
+        for path in path_yielder(branch, value):
+                yield [t.label] + path 
+                
+    "*** YOUR CODE HERE ***"
 
 
 class Link:
