@@ -240,8 +240,7 @@ def preorder(t):
     #method_2
     #method_3
     [branch.label for branch in t.branches]
-        
-
+    
 def path_yielder(t, value):
     """Yields all possible paths from the root of t to a node with the label value
     as a list.
@@ -283,7 +282,6 @@ def path_yielder(t, value):
     for branch in t.branches:
         for path in path_yielder(branch, value):
                 yield [t.label] + path 
-                
     "*** YOUR CODE HERE ***"
 
 
